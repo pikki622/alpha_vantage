@@ -22,7 +22,7 @@ class TimeSeries(av):
                 series, commonly above 1MB (default 'compact')
         """
         _FUNCTION_KEY = "TIME_SERIES_INTRADAY"
-        return _FUNCTION_KEY, "Time Series ({})".format(interval), 'Meta Data'
+        return _FUNCTION_KEY, f"Time Series ({interval})", 'Meta Data'
 
     @av._output_format
     @av._call_api_on_func
@@ -42,7 +42,7 @@ class TimeSeries(av):
                 Set adjusted=false to query raw (as-traded) intraday values.
         """
         _FUNCTION_KEY = "TIME_SERIES_INTRADAY_EXTENDED"
-        return _FUNCTION_KEY, "Time Series ({})".format(interval), 'Meta Data'
+        return _FUNCTION_KEY, f"Time Series ({interval})", 'Meta Data'
 
     @av._output_format
     @av._call_api_on_func

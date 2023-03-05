@@ -38,9 +38,7 @@ class TestAlphaVantage(unittest.TestCase):
         stime = timeit.default_timer()
         data, meta_data = func(**args)
         elapsed = timeit.default_timer() - stime
-        print('Function: {} - Format: {} - Took: {}'.format(func.__name__,
-                                                            output_format,
-                                                            elapsed))
+        print(f'Function: {func.__name__} - Format: {output_format} - Took: {elapsed}')
         if output_format == 'json':
             self.assertIsInstance(
                 data, dict, 'Result Data must be a dictionary')
