@@ -136,7 +136,7 @@ class AlphaVantage(object):
                     # Discard argument in the url formation if it was set to
                     # None (in other words, this will call the api with its
                     # internal defined parameter)
-                    if isinstance(arg_value, tuple) or isinstance(arg_value, list):
+                    if isinstance(arg_value, (tuple, list)):
                         # If the argument is given as list, then we have to
                         # format it, you gotta format it nicely
                         arg_value = ','.join(arg_value)
@@ -158,6 +158,7 @@ class AlphaVantage(object):
             else:
                 url = '{}{}'.format(url, apikey_parameter)
             return self._handle_api_call(url), data_key, meta_data_key
+
         return _call_wrapper
 
     @classmethod
@@ -218,17 +219,9 @@ class AlphaVantage(object):
             call_response, data_key, meta_data_key = func(
                 self, *args, **kwargs)
             if 'json' in self.output_format.lower() or 'pandas' \
-                    in self.output_format.lower():
-                if data_key is not None:
-                    data = call_response[data_key]
-                else:
-                    data = call_response
-                
-
-                if meta_data_key is not None:
-                    meta_data = call_response[meta_data_key]
-                else:
-                    meta_data = None
+                        in self.output_format.lower():
+                data = call_response[data_key] if data_key is not None else call_response
+                meta_data = call_response[meta_data_key] if meta_data_key is not None else None
                 # Allow to override the output parameter in the call
                 if override is None:
                     output_format = self.output_format.lower()
@@ -298,6 +291,7 @@ class AlphaVantage(object):
             else:
                 raise ValueError('Format: {} is not supported'.format(
                     self.output_format))
+
         return _format_wrapper
 
     def set_proxy(self, proxy=None):
@@ -333,7 +327,7 @@ class AlphaVantage(object):
         try:
             value = int(matype)
             if abs(value) > len(AlphaVantage._ALPHA_VANTAGE_MATH_MAP):
-                raise ValueError("The value {} is not supported".format(value))
+                raise ValueError(f"The value {value} is not supported")
         except ValueError:
             value = AlphaVantage._ALPHA_VANTAGE_MATH_MAP.index(matype)
         return value
@@ -350,7 +344,7 @@ class AlphaVantage(object):
         """
         response = requests.get(url, proxies=self.proxy, headers=self.headers)
         if 'json' in self.output_format.lower() or 'pandas' in \
-                self.output_format.lower():
+                    self.output_format.lower():
             json_response = response.json()
             if not json_response:
                 raise ValueError(
@@ -363,8 +357,8 @@ class AlphaVantage(object):
                 raise ValueError(json_response["Note"])
             return json_response
         else:
-            csv_response = csv.reader(response.text.splitlines())
-            if not csv_response:
+            if csv_response := csv.reader(response.text.splitlines()):
+                return csv_response
+            else:
                 raise ValueError(
                     'Error getting data from the api, no return was given.')
-            return csv_response

@@ -12,8 +12,9 @@ class TechIndicators(av):
         super(TechIndicators, self).__init__(*args, **kwargs)
         self._append_type = False
         if self.output_format.lower() == 'csv':
-            raise ValueError("Output format {} is not comatible with the TechIndicators class".format(
-                self.output_format.lower()))
+            raise ValueError(
+                f"Output format {self.output_format.lower()} is not comatible with the TechIndicators class"
+            )
 
     @av._output_format
     @av._call_api_on_func

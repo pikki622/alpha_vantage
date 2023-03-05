@@ -12,8 +12,9 @@ class ForeignExchange(av):
         super(ForeignExchange, self).__init__(*args, **kwargs)
         self._append_type = False
         if self.output_format.lower() == 'csv':
-            raise ValueError("Output format {} is not compatible with the ForeignExchange class".format(
-                self.output_format.lower()))
+            raise ValueError(
+                f"Output format {self.output_format.lower()} is not compatible with the ForeignExchange class"
+            )
 
     @av._output_format
     @av._call_api_on_func
@@ -53,7 +54,7 @@ class ForeignExchange(av):
                 series, commonly above 1MB (default 'compact')
         """
         _FUNCTION_KEY = 'FX_INTRADAY'
-        return _FUNCTION_KEY, "Time Series FX ({})".format(interval), 'Meta Data'
+        return _FUNCTION_KEY, f"Time Series FX ({interval})", 'Meta Data'
 
     @av._output_format
     @av._call_api_on_func

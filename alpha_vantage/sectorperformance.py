@@ -13,8 +13,9 @@ class SectorPerformances(av):
         super(SectorPerformances, self).__init__(*args, **kwargs)
         self._append_type = False
         if self.output_format.lower() == 'csv':
-            raise ValueError("Output format {} is not comatible with the SectorPerformances class".format(
-                self.output_format.lower()))
+            raise ValueError(
+                f"Output format {self.output_format.lower()} is not comatible with the SectorPerformances class"
+            )
 
     def percentage_to_float(self, val):
         """ Transform a string of the form f.f% into f.f/100

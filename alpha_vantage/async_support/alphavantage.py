@@ -82,7 +82,7 @@ class AlphaVantage(AlphaVantageBase):
                     # Discard argument in the url formation if it was set to
                     # None (in other words, this will call the api with its
                     # internal defined parameter)
-                    if isinstance(arg_value, tuple) or isinstance(arg_value, list):
+                    if isinstance(arg_value, (tuple, list)):
                         # If the argument is given as list, then we have to
                         # format it, you gotta format it nicely
                         arg_value = ','.join(arg_value)
@@ -104,6 +104,7 @@ class AlphaVantage(AlphaVantageBase):
             else:
                 url = '{}{}'.format(url, apikey_parameter)
             return await self._handle_api_call(url), data_key, meta_data_key
+
         return _call_wrapper
 
     @classmethod
@@ -164,13 +165,10 @@ class AlphaVantage(AlphaVantageBase):
             call_response, data_key, meta_data_key = await func(
                 self, *args, **kwargs)
             if 'json' in self.output_format.lower() or 'pandas' \
-                    in self.output_format.lower():
+                        in self.output_format.lower():
                 data = call_response[data_key]
 
-                if meta_data_key is not None:
-                    meta_data = call_response[meta_data_key]
-                else:
-                    meta_data = None
+                meta_data = call_response[meta_data_key] if meta_data_key is not None else None
                 # Allow to override the output parameter in the call
                 if override is None:
                     output_format = self.output_format.lower()
@@ -222,6 +220,7 @@ class AlphaVantage(AlphaVantageBase):
             else:
                 raise ValueError('Format: {} is not supported'.format(
                     self.output_format))
+
         return _format_wrapper
 
     def set_proxy(self, proxy=None):
@@ -245,7 +244,7 @@ class AlphaVantage(AlphaVantageBase):
             self.session = aiohttp.ClientSession()
         response = await self.session.get(url, proxy=self.proxy, headers=self.headers)
         if 'json' in self.output_format.lower() or 'pandas' in \
-                self.output_format.lower():
+                    self.output_format.lower():
             json_response = await response.json()
             if not json_response:
                 raise ValueError(
@@ -258,11 +257,11 @@ class AlphaVantage(AlphaVantageBase):
                 raise ValueError(json_response["Note"])
             return json_response
         else:
-            csv_response = csv.reader(response.text.splitlines())
-            if not csv_response:
+            if csv_response := csv.reader(response.text.splitlines()):
+                return csv_response
+            else:
                 raise ValueError(
                     'Error getting data from the api, no return was given.')
-            return csv_response
 
     async def close(self):
         """

@@ -14,8 +14,9 @@ class FundamentalData(av):
         super(FundamentalData, self).__init__(*args, **kwargs)
         self._append_type = False
         if self.output_format.lower() == 'csv':
-            raise ValueError("Output format {} is not compatible with the FundamentalData class".format(
-                self.output_format.lower()))
+            raise ValueError(
+                f"Output format {self.output_format.lower()} is not compatible with the FundamentalData class"
+            )
 
     @av._output_format
     @av._call_api_on_func
